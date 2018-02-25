@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #define TRAV_INIT_SIZE 8
 
 
@@ -11,10 +12,10 @@ typedef struct list_struct
 	struct list_struct *next;
 }list_t;
 
-static list_t endlist;
-static list_t *headptr=NULL;
-static list_t *tailptr=NULL;
-static list_t **travptrs=NULL;
+static list_t endlist;//尾
+static list_t *headptr=NULL;//首
+static list_t *tailptr=NULL;//倒数第二尾
+static list_t **travptrs=NULL;//key array
 static int travptrs_size=0;
 int accessData(){
 	int i;
@@ -26,7 +27,7 @@ int accessData(){
 	}
 	/*set key*/
 	if(travptrs_size==0){
-		travptrs=(list **)calloc(TRAV_INIT_SIZE,sizeof(list_t *));
+		travptrs=(list_t **)calloc(TRAV_INIT_SIZE,sizeof(list_t *));
 		if(!travptrs)
 			return -1;
 		travptrs[0]=headptr;
@@ -43,9 +44,9 @@ int accessData(){
 	if(!newptrs)
 		return -1;
 	travptrs=newptrs;
-	travptrs_size[travptrs_size]=headptr;
+	travptrs[travptrs_size]=headptr;
 	travptrs_size*=2;
-	return ravptrs_size/2;
+	return travptrs_size/2;
 }
 int addData(data_t data){
 	list_t *newnode;
@@ -86,7 +87,7 @@ int getData(int key,data_t *datap){
 	return 0;
 }
 int freekey(int key){
-	f(key<0||key>=travptrs_size){
+	if(key<0||key>=travptrs_size){
 		errno=EINVAL;
 		return -1;
 	}
